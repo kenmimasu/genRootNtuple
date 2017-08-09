@@ -1,0 +1,16 @@
+!  Settings used in the main program.
+Main:numberOfEvents = 50            ! how many events to process
+Main:outputFileName = myNtuple.root ! name of output root file
+
+!  Settings related to output in init(), next() and stat().
+Init:showChangedSettings = off      ! list changed settings
+Init:showChangedParticleData = off ! list changed particle data
+Next:numberCount =   0             ! print message every n events, 0 = off
+Next:numberShowLHA = 1             ! print LHA information n times
+Next:numberShowInfo = 1            ! print event information n times
+Next:numberShowProcess = 1         ! print process record n times
+Next:numberShowEvent = 0           ! print event record n times
+
+Beams:frameType = 4                ! use LHEF input
+Beams:LHEF = ttbar.lhe             ! LHEF event file
+
