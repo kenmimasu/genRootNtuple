@@ -3,7 +3,6 @@
 // PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// This is a simple test program.
 // Modified by Rene Brun and Axel Naumann to put the Pythia::event
 // into a TTree.
 
@@ -18,45 +17,48 @@
 using namespace std;
 using namespace Pythia8;
 
-int main() {
-
+int main(int argc, char** argv) {
+  // Parse args
+  string cmndFile = "genRootNtuple.cmnd";
+  string usage = "Usage: ./genRootNtuple [COMMANDFILE] (default = genRootNtuple.cmnd)\n";
+  if (argc == 1) {
+  } else if(argc == 2) { 
+      cmndFile = argv[1]; // Command file to be read in by Pythia
+  } else { // Incorrect number of arguments
+      cout << usage; 
+      return 0;
+  }
+  
   // Pythia instance
   Pythia pythia;
   pythia.settings.addWord("Main:outputFileName", "myNtuple.root"); 
 
   // Read in settings & intialize
-  pythia.readFile( "genRootNtuple.cmnd", 0);
+  pythia.readFile( cmndFile, 0);
   pythia.init();
 
   // Program options
   int nEvents = pythia.mode("Main:numberOfEvents");
-  if (nEvents < 0) nEvents = 1e9;
+  if (nEvents < 0) nEvents = 1e10; // should be large enough...
 
   const string outName = pythia.word("Main:outputFileName");
 
   // Branch variable declaration
   int eventNumber;
-  int lha_id1;
-  int lha_id2;
-  int lha_id1pdf;
-  int lha_id2pdf;
+  int lha_id1, lha_id2;
+  int lha_id1pdf, lha_id2pdf;
   int lha_strategy;
   int mc_n;
   
   float lha_s;
-  float lha_x1;
-  float lha_x2;
-  float lha_x1pdf;
-  float lha_x2pdf;
-  float lha_pdf1;
-  float lha_pdf2;
+  float lha_x1, lha_x2;
+  float lha_x1pdf, lha_x2pdf;
+  float lha_pdf1, lha_pdf2;
   float lha_QFac;
-  float lha_alphaS;
-  float lha_alphaEM;
+  float lha_alphaS, lha_alphaEM;
   float lha_scalup;
   float lha_weight;
-  float lha_y;
-  float lha_tau;
+  float lha_y, lha_tau;
 
   vector<int> *mc_pdgId = new vector<int>;
   vector<int> *mc_status = new vector<int>;
@@ -109,7 +111,7 @@ int main() {
   T->Branch("mc_charge", &mc_charge);
   T->Branch("mc_parent_index", &mc_parent_index);
   T->Branch("mc_child_index", &mc_child_index);
-  T->Branch("EventNumber", &eventNumber);
+  T->Branch("eventNumber", &eventNumber);
 
  // Begin event loop. Generate event; skip if generation aborted.
   for (int iEvent = 0; iEvent < nEvents; ++iEvent) {
@@ -118,27 +120,20 @@ int main() {
         continue;
     } 
     // Clear values
-    eventNumber=0;
-    lha_id1=0;
-    lha_id2=0;
-    lha_id1pdf=0;
-    lha_id2pdf=0;
-    lha_strategy=0;
-    mc_n=0;
-    lha_s=0;
-    lha_x1=0;
-    lha_x2=0;
-    lha_x1pdf=0;
-    lha_x2pdf=0;
-    lha_pdf1=0;
-    lha_pdf2=0;
-    lha_QFac=0;
-    lha_alphaS=0;
-    lha_alphaEM=0;
-    lha_scalup=0;
-    lha_weight=0;
-    lha_y=0;
-    lha_tau=0;
+    eventNumber = iEvent+1;
+    lha_id1 = lha_id2 = 0;
+    lha_id1pdf = lha_id2pdf = 0;
+    lha_strategy = 0;
+    mc_n = 0;
+    lha_s = 0.;
+    lha_x1 = lha_x2 = 0.;
+    lha_x1pdf = lha_x2pdf = 0.;
+    lha_pdf1 = lha_pdf2 = 0.;
+    lha_QFac = 0.;
+    lha_alphaS = lha_alphaEM = 0.;
+    lha_scalup = 0.;
+    lha_weight = 0.;
+    lha_y = lha_tau = 0.;
     mc_pt->clear();
     mc_eta->clear();
     mc_phi->clear();
@@ -150,25 +145,18 @@ int main() {
     mc_child_index->clear();
 
     // Assign LHA event info values
-    lha_id1=info->id1();
-    lha_id2=info->id2();
-    lha_id1pdf=info->id1pdf();
-    lha_id2pdf=info->id2pdf();
-    lha_strategy=info->lhaStrategy();
-    lha_s=info->s();
-    lha_x1=info->x1();
-    lha_x2=info->x2();
-    lha_x1pdf=info->x1pdf();
-    lha_x2pdf=info->x2pdf();
-    lha_pdf1=info->pdf1();
-    lha_pdf2=info->pdf2();
-    lha_QFac=info->QFac();
-    lha_alphaS=info->alphaS();
-    lha_alphaEM=info->alphaEM();
-    lha_scalup=info->scalup();
-    lha_weight=info->weight();
-    lha_y=info->y();
-    lha_tau=info->tau();
+    lha_id1 = info->id1(), lha_id2 = info->id2();
+    lha_id1pdf = info->id1pdf(), lha_id2pdf = info->id2pdf();
+    lha_strategy = info->lhaStrategy();
+    lha_s = info->s();
+    lha_x1 = info->x1(), lha_x2 = info->x2();
+    lha_x1pdf = info->x1pdf(), lha_x2pdf = info->x2pdf();
+    lha_pdf1 = info->pdf1(), lha_pdf2 = info->pdf2();
+    lha_QFac = info->QFac();
+    lha_alphaS = info->alphaS(), lha_alphaEM = info->alphaEM();
+    lha_scalup = info->scalup();
+    lha_weight = info->weight();
+    lha_y = info->y(), lha_tau = info->tau();
     
     // Assign particle info values 
     mc_n=pythia.event.size();
@@ -196,12 +184,8 @@ int main() {
   // pythia.stat();
 
   //  Write tree.
-  // cout << "printing tree"<< endl;
-  // T->Print();
-  // cout << "writing tree"<< endl;
   T->Write();
-  // cout << "deleting file"<< endl;
-  // delete file;
+
   cout << "done"<< endl;
 
   // Done.
@@ -209,65 +193,3 @@ int main() {
 }
 
 
-// main13.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2017 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
-// Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// This is a simple test program.
-// It illustrates how two Les Houches Event Files can be combined in PYTHIA,
-// just like in main12.cc, but here with the difference that information is
-// stored in main13.cmnd and read out using the subruns possibility.
-
-/*#include "Pythia8/Pythia.h"
-using namespace Pythia8;
-int main() {
-
-  // Book histogram.
-  Hist nCharged("charged particle multiplicity",100,-0.5,399.5);
-
-  // Generator.
-  Pythia pythia;
-
-
-  // Extract data to be used in main program. Set counters.
-  int nSubrun = pythia.mode("Main:numberOfSubruns");
-  int nAbort  = pythia.mode("Main:timesAllowErrors");
-  int iAbort  = 0;
-
-  // Begin loop over subruns.
-  for (int iSubrun = 1; iSubrun <= nSubrun; ++iSubrun) {
-
-    // Read in subrun-specific data from main13.cmnd.
-    pythia.readFile( "main13.cmnd", iSubrun);
-
-    // Initialize generator.
-    pythia.init();
-
-    // Begin infinite event loop - to be exited at end of file.
-    for (int iEvent = 0; ; ++iEvent) {
-
-      // Generate next event.
-      if (!pythia.next()) {
-
-        // Leave event loop if at end of file.
-        if (pythia.info.atEndOfFile()) break;
-
-        // First few failures write off as "acceptable" errors, then quit.
-        if (++iAbort < nAbort) continue;
-        break;
-      }
-
-    // End of event loop.
-    }
-
-  // End of subrun loop.
-  }
-
-  // Give statistics. Print histogram.
-  pythia.stat();
-  cout << nCharged;
-
-  // Done.
-  return 0;
-}*/
