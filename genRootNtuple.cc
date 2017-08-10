@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 
   // Program options
   int nEvents = pythia.mode("Main:numberOfEvents");
-  if (nEvents < 0) nEvents = 1e10; // should be large enough...
+  if (nEvents <= 0) nEvents = 1000000000; // should be large enough...
 
   const string outName = pythia.word("Main:outputFileName");
 

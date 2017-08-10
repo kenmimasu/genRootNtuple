@@ -8,9 +8,11 @@
 // into a TTree.
 
 #ifdef __CINT__
+#include <vector>
 #pragma link off all globals;
 #pragma link off all classes;
 #pragma link off all functions;
+#pragma link C++ class vector<vector<int> >+;
 #pragma link C++ namespace Pythia8;
 #pragma link C++ class Pythia8::Event+;
 #pragma link C++ class Pythia8::Particle+;
@@ -50,3 +52,5 @@
 #pragma link C++ class Pythia8::ResonanceHchgchgRight+;
 #pragma link C++ class Pythia8::SigmaProcess+;
 #endif
+
+
