@@ -2,3 +2,5 @@
 *.root
 *.lhe
 *.pcm
+*Dct.cc
+genRootNtuple
